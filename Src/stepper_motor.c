@@ -4,32 +4,22 @@
 
 #include "stm32f4xx.h"
 
-#define GPIOCEN				(1U << 2)
 #define GPIOAEN				(1U << 0)
 
 #define TIM2EN				(1U << 0)
 
-#define TIM3EN				(1U << 1)
-
-#define CC2P				(1U << 5)
 #define CC1E				(1U << 0)
-#define CC2E				(1U << 4)
-
-#define TIM5EN				(1U << 3)
 
 #define CEN					(1U << 0)
 #define UG 					(1U << 0)
 
-#define AF2 				(1U << 1)
 #define AF1					(0x1U)
 
 #define	ARPE				(1U << 7)
 
-#define OC2PE				(1U << 11)
 #define OC1PE				(1U << 3)
 
 #define OC4PE				(1U << 11)
-#define OC3PE				(1U << 3)
 
 
 #define DIR_PIN_1 			1U
@@ -44,12 +34,12 @@
 #define FORWARD 			1U
 #define REVERSE 			0U
 
-#define ACCEL				110U
-#define DECEL 				105U
+#define ACCEL				200U
+#define DECEL 				205U
 
-#define DISTANCE 500000UL
+#define DISTANCE 25000UL
 
-int16_t current_speed, target_speed;
+float current_speed, target_speed;
 
 void disable_driver(void)
 {
@@ -124,9 +114,9 @@ void motor_init(uint16_t period)
 
 void set_period(uint32_t period)
 {
-	if(period < 200)
+	if(period < 13)
 	{
-		period = 200;
+		period = 13;
 	}
 
 	TIM2->ARR = period - 1;
@@ -144,24 +134,24 @@ void set_direction(uint16_t direction)
 	}
 }
 
-void set_speed(int16_t speed)
+void set_speed(float speed)
 {
 	if(speed > 2000)
 	{
-		speed = 2000;
+		speed = 2000.0f;
 	}
 	else if (speed < -2000)
 	{
-		speed = -2000;
+		speed = -2000.0f;
 	}
 
 	target_speed = speed;
 }
 
-void apply_speed(int16_t speed)
+void apply_speed(float speed)
 {
 	uint32_t period;
-	uint16_t speed_magnitude = speed;
+	float speed_magnitude = speed;
 	uint8_t direction;
 	if(speed > 0)
 	{
@@ -171,14 +161,14 @@ void apply_speed(int16_t speed)
 	else
 	{
 		direction = REVERSE;
-		speed_magnitude = -1 * speed;
+		speed_magnitude = -1.0f * speed;
 	}
 
-	if (speed_magnitude < 50)
+	if (speed_magnitude < 25)
 	{
 		TIM2->CR1 &= ~CEN;
 		TIM2->CNT = 0;
-		set_period(65536);
+		set_period(15000);
 		return;
 	}
 	else if (!(TIM2->CR1 & CEN))

@@ -155,27 +155,3 @@ void I2C1_burst_write(char saddr, char maddr, char n, uint8_t * data)
 	while(!(I2C1->SR1 & BTF)){}
 	I2C1->CR1 |= STOP;
 }
-
-
-void I2C1_burst_write_direct(char saddr, char n, char* data)
-{
-	volatile int tmp;
-
-	while(I2C1->SR2 & BUSY){}
-	I2C1->CR1 |= START;
-
-	while(!(I2C1->SR1 & SB)){}
-	I2C1->DR = saddr << 1;
-
-	while(!(I2C1->SR1 & ADDR)){}
-	tmp = I2C1->SR2;
-
-	for(int i = 0; i < n; i++)
-	{
-		while(!(I2C1->SR1 & TXE)){}
-		I2C1->DR = *data++;
-	}
-
-	while(!(I2C1->SR1 & BTF)){}
-	I2C1->CR1 |= STOP;
-}

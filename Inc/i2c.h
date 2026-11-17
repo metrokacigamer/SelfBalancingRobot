@@ -25,8 +25,6 @@
 
 void I2C1_burst_write(char saddr, char maddr, char n, uint8_t* data);
 
-void I2C1_burst_write_direct(char saddr, char n, char* data);
-
 void I2C1_burst_read(char saddr, char maddr, char n, uint8_t* data);
 
 void I2C1_byte_read(char saddr, char maddr, char* data);
