@@ -38,9 +38,7 @@ float az_off = -200.0f;
 
 //PID constants
 
-
-//float P_angle = 30.0f, I_angle = 0.0f, D_angle = 0.0f;
-float P_angle = 29.0f, I_angle = 85.0f, D_angle = 0.1f;
+float P_angle = 29.0f, I_angle = 85.0f;
 float error = 0, prev_error = 0, prev_Iterm = 0;
 
 int main(void)
@@ -86,7 +84,7 @@ int main(void)
 		kalman_1d(&roll, &roll_uncertainty, xg_gy, roll_deg, period);
 
 		error = target - 1.0f * roll;
-		CalculatePID(P_angle, I_angle, D_angle, error, prev_error, prev_Iterm, period, PID_outputs);
+		CalculatePID(P_angle, I_angle, error, prev_error, prev_Iterm, PID_outputs);
 
 		speed = PID_outputs[0];
 		prev_error = PID_outputs[1];
