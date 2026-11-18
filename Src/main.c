@@ -12,7 +12,7 @@
 #define __FPU_USED 1
 
 //target angle
-float target = 0.9f;
+float target = 1.25f;
 
 //stepper motor speed
 float speed = 2000.0f;
@@ -37,7 +37,10 @@ float ay_off = -243.11f;
 float az_off = -200.0f;
 
 //PID constants
-float P_angle = 29.0f, I_angle = 75.0f, D_angle = 0.4f;//0.017f;
+
+
+//float P_angle = 30.0f, I_angle = 0.0f, D_angle = 0.0f;
+float P_angle = 29.0f, I_angle = 85.0f, D_angle = 0.1f;
 float error = 0, prev_error = 0, prev_Iterm = 0;
 
 int main(void)

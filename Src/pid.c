@@ -1,6 +1,26 @@
 #include "pid.h"
 #include <math.h>
-//#define I_LIMIT				50.0f
+#define I_LIMIT				150.0f
+
+
+float avg_error = 0.0f;
+float D_current = 0.0f;
+
+void UpdateDerivativeGain(float error, float dt)
+{
+    const float TAU = 0.3f;
+
+    float alpha = dt / (TAU + dt);
+
+    avg_error += alpha * (error - avg_error);
+
+    float factor = fabsf(avg_error) / 7.0f;
+
+    if (factor > 1.0f)
+        factor = 1.0f;
+
+    D_current = 0.097f + 0.4f * factor;
+}
 
 void CalculatePID(float P, float I, float D, float error, float prev_error, float prev_Iterm, int32_t period_us, float* output)
 {
@@ -18,20 +38,16 @@ void CalculatePID(float P, float I, float D, float error, float prev_error, floa
 		max_error *= 0.995f;
 	}
 
-	float I_LIMIT = 5.0f + 10.0f * max_error;
+//	float I_LIMIT = 5.0f + 15.0f * max_error;
 
-	float dt = 0.001827f;//(period_us * 1.0f)/1000000.0f;
+
+	float dt = 0.001827//(period_us * 1.0f)/1000000.0f;;;
+	UpdateDerivativeGain(error, dt);
 
 	float I_candidate = prev_Iterm + I * ((prev_error + error) * dt * 0.5f);
-	float d_factor = fabsf(error) / 10.0f;
 
-	if (d_factor > 1.0f)
-	    d_factor = 1.0f;
-
-	float D_current = 0.1f + (0.5f - 0.1f) * d_factor;
-
-	float Dterm = D_current * ((error - prev_error) / dt);
-//	float Dterm = D * ((error - prev_error)/dt);
+	float Dterm = D_current * ((error - prev_error) / dt
+//	float Dterm = D * ((error - prev_error)/dt););
 	float Pterm = P * error;
 	float pid_output;
 
